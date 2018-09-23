@@ -1,20 +1,15 @@
 $(document).ready(function(){
+ 
+  
+//This function builds the html page to display all the quiz questions  
 function buildQuiz() {
-  // we'll need a place to store the HTML output
   $(".Instructions").empty();
   submitButton.style.display= "block";
-  const output = [];
+  var output = [];
  
-  // for each question...
   myQuestions.forEach((currentQuestion, questionNumber) => {
-    // we'll want to store the list of answer choices
     var answers = [];
-    //console.log (questionNumber);
-    // and for each available answer...
     for (letter in currentQuestion.answers) {
-      // ...add an HTML radio button
-      // answers.push("<label><input type='radio' name='"+ questionNumber +"' value='" + letter + "' class='option-input radio'>" +
-      //      currentQuestion.answers[letter] + "</label>");
       answers.push(`<label>
             <input type="radio" class= "option-input radio" name="question${questionNumber}" value="${letter}">      
             ${currentQuestion.answers[letter]}
@@ -22,53 +17,31 @@ function buildQuiz() {
         );
    
     }
-    
-    // add this question and its answers to the output
     output.push("<div class='question'>" +  currentQuestion.question + "</div>" +
     " <div class='answers'>" +  answers.join("") + "</div>");
     
   });
 
-  // finally combine our output list into one string of HTML and put it on the page
   quizContainer.innerHTML = "<h4>Time Left : " + "<span id = 'timer'></span></h4>" + output.join(""); 
-  //quizContainer.innerHTML = output.join("");
-  //console.log(output);
 }
 
-
+//This function checks the correctanswers /wrong/unanswered and evalueates the quiz.
 function CheckAnswersShowResults()
 {
-  // gather answer containers from our quiz
   const answerContainers = quizContainer.querySelectorAll(".answers");
 
-  // keep track of user's answers
   var numCorrect = 0;
   var numWrong = 0;
   var numUnanswered = 0;
   var wronganswers = [];
-
-  
- // console.log(myQuestions);
-  // for each question...
-  myQuestions.forEach((currentQuestion, questionNumber) => {
-    // find selected answer
+myQuestions.forEach((currentQuestion, questionNumber) => {
     var answerContainer = answerContainers[questionNumber];
-    //console.log(answerContainers);
     var selector = `input[name=question${questionNumber}]:checked`;
     var userAnswer = (answerContainer.querySelector(selector) || {}).value;
-   // console.log(currentQuestion.correctAnswer, userAnswer);
-
-    // if answer is correct
     if (userAnswer === currentQuestion.correctAnswer) {
-      // add to the number of correct answers
       numCorrect++;
-
-      // color the answers green
       answerContainers[questionNumber].style.color = "lightgreen";
     } else {
-      // if answer is wrong or blank
-      // color the answers red
-      //console.log(currentQuestion.answers[currentQuestion.correctAnswer]);
       var wrongones = "<p>"+ currentQuestion.question + " - " + currentQuestion.answers[currentQuestion.correctAnswer]   +  "</p>";
       wronganswers.push(wrongones);
       answerContainers[questionNumber].style.color = "red";
@@ -82,15 +55,10 @@ function CheckAnswersShowResults()
       }
     }
   });
-
-  // show number of correct answers out of total
   var displayHTML = "<h3>Correct Answers : " + numCorrect + "</h3>";
   displayHTML += "<h3>Wrong  Answers : " + numWrong + "</h3>";
   displayHTML += "<h3>Unanswered  Questions : " + numUnanswered + "</h3>";
   displayHTML += wronganswers.join("");
-  
-  //resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
-  //resultsContainer.appendChild(displayHTML);
   $("#results").append(displayHTML);
   resultsContainer.style.display = "block";
   quizContainer.style.display = "none";
@@ -210,7 +178,7 @@ var myQuestions = [
 
 // display quiz on start 
 startButton.addEventListener("click",buildQuiz);
-//buildQuiz();
+
 var timer = setInterval(function(){
   timeLeft--;
   if(timeLeft == 0)
